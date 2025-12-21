@@ -1,0 +1,63 @@
+# file: action.yml
+# version: 1.0.0
+# guid: 7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d
+
+name: "Determine Release Strategy"
+description: "Determine release strategy (stable/prerelease/draft) based on branch and configuration"
+author: "jdfalk"
+
+branding:
+  icon: "package"
+  color: "orange"
+
+inputs:
+  branch-name:
+    description: "Git branch name (usually github.ref_name)"
+    required: true
+
+  force-prerelease:
+    description: "Force release as prerelease regardless of branch"
+    required: false
+    default: "false"
+
+  force-draft:
+    description: "Force release as draft regardless of branch"
+    required: false
+    default: "false"
+
+outputs:
+  strategy:
+    description: "Release strategy (stable/prerelease/draft)"
+    value: ${{ steps.strategy.outputs.strategy }}
+
+  auto-prerelease:
+    description: "Whether release should automatically be marked prerelease"
+    value: ${{ steps.strategy.outputs.auto-prerelease }}
+
+  auto-draft:
+    description: "Whether release should automatically be marked draft"
+    value: ${{ steps.strategy.outputs.auto-draft }}
+
+  is-stable:
+    description: "Whether this is a stable release"
+    value: ${{ steps.strategy.outputs.is-stable }}
+
+  is-prerelease:
+    description: "Whether this is a prerelease"
+    value: ${{ steps.strategy.outputs.is-prerelease }}
+
+  is-draft:
+    description: "Whether this is a draft release"
+    value: ${{ steps.strategy.outputs.is-draft }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Determine strategy
+      id: strategy
+      shell: bash
+      env:
+        BRANCH_NAME: ${{ inputs.branch-name }}
+        FORCE_PRERELEASE: ${{ inputs.force-prerelease }}
+        FORCE_DRAFT: ${{ inputs.force-draft }}
+      run: bash "${{ github.action_path }}/src/release_strategy.sh"
