@@ -23,32 +23,32 @@ Determine release strategy (stable/prerelease/draft) based on git branch and con
 
 ## Inputs
 
-| Input | Description | Required |
-|-------|-------------|----------|
-| `branch-name` | Git branch name | Yes |
-| `force-prerelease` | Force release as prerelease | No |
-| `force-draft` | Force release as draft | No |
+| Input              | Description                 | Required |
+| ------------------ | --------------------------- | -------- |
+| `branch-name`      | Git branch name             | Yes      |
+| `force-prerelease` | Force release as prerelease | No       |
+| `force-draft`      | Force release as draft      | No       |
 
 ## Outputs
 
-| Output | Description |
-|--------|-------------|
-| `strategy` | Release strategy (`stable`/`prerelease`/`draft`) |
-| `auto-prerelease` | Whether to auto-mark as prerelease |
-| `auto-draft` | Whether to auto-mark as draft |
-| `is-stable` | Whether this is stable (`true`/`false`) |
-| `is-prerelease` | Whether this is prerelease |
-| `is-draft` | Whether this is draft |
+| Output            | Description                                      |
+| ----------------- | ------------------------------------------------ |
+| `strategy`        | Release strategy (`stable`/`prerelease`/`draft`) |
+| `auto-prerelease` | Whether to auto-mark as prerelease               |
+| `auto-draft`      | Whether to auto-mark as draft                    |
+| `is-stable`       | Whether this is stable (`true`/`false`)          |
+| `is-prerelease`   | Whether this is prerelease                       |
+| `is-draft`        | Whether this is draft                            |
 
 ## Strategy Logic
 
 ### Branch-Based Strategy
 
-| Branch | Strategy | Details |
-|--------|----------|---------|
-| `main` | Stable | Created as **DRAFT** for review before publishing |
-| `develop` | Prerelease | Published **DIRECTLY** as prerelease |
-| `feature/*` | Prerelease | Published **DIRECTLY** as prerelease |
+| Branch      | Strategy   | Details                                           |
+| ----------- | ---------- | ------------------------------------------------- |
+| `main`      | Stable     | Created as **DRAFT** for review before publishing |
+| `develop`   | Prerelease | Published **DIRECTLY** as prerelease              |
+| `feature/*` | Prerelease | Published **DIRECTLY** as prerelease              |
 
 ### Overrides
 
