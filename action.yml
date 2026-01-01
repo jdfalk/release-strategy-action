@@ -1,9 +1,9 @@
 # file: action.yml
-# version: 1.0.0
+# version: 2.0.0
 # guid: 7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d
 
-name: "Determine Release Strategy"
-description: "Determine release strategy (stable/prerelease/draft) based on branch and configuration"
+name: "Release Strategy & Changelog Generator"
+description: "Determine release strategy, generate changelog, and build release summaries based on branch configuration"
 author: "jdfalk"
 
 branding:
@@ -25,39 +25,321 @@ inputs:
     required: false
     default: "false"
 
+  command:
+    description: "Command to execute: 'strategy' (default), 'changelog', or 'summary'"
+    required: false
+    default: "strategy"
+
+  primary-language:
+    description: "Primary language of the project (required for 'changelog' and 'summary' commands)"
+    required: false
+    default: "unknown"
+
+  release-tag:
+    description: "Release tag for summary (required for 'summary' command)"
+    required: false
+    default: "n/a"
+
+  release-strategy:
+    description: "Release strategy for summary (required for 'summary' command)"
+    required: false
+    default: "n/a"
+
+  build-target:
+    description: "Build target for summary (required for 'summary' command)"
+    required: false
+    default: "all"
+
+  summary-components:
+    description: 'JSON string of component results for summary (e.g., {"Go": "success", "Python": "skipped"})'
+    required: false
+    default: "{}"
+
 outputs:
   strategy:
     description: "Release strategy (stable/prerelease/draft)"
-    value: ${{ steps.strategy.outputs.strategy }}
+    value: ${{ steps.action.outputs.strategy }}
 
   auto-prerelease:
     description: "Whether release should automatically be marked prerelease"
-    value: ${{ steps.strategy.outputs.auto-prerelease }}
+    value: ${{ steps.action.outputs.auto-prerelease }}
 
   auto-draft:
     description: "Whether release should automatically be marked draft"
-    value: ${{ steps.strategy.outputs.auto-draft }}
+    value: ${{ steps.action.outputs.auto-draft }}
 
   is-stable:
     description: "Whether this is a stable release"
-    value: ${{ steps.strategy.outputs.is-stable }}
+    value: ${{ steps.action.outputs.is-stable }}
 
   is-prerelease:
     description: "Whether this is a prerelease"
-    value: ${{ steps.strategy.outputs.is-prerelease }}
+    value: ${{ steps.action.outputs.is-prerelease }}
 
   is-draft:
     description: "Whether this is a draft release"
-    value: ${{ steps.strategy.outputs.is-draft }}
+    value: ${{ steps.action.outputs.is-draft }}
+
+  changelog:
+    description: "Generated changelog content (for 'changelog' command)"
+    value: ${{ steps.action.outputs.changelog }}
 
 runs:
   using: "composite"
   steps:
-    - name: Determine strategy
-      id: strategy
-      shell: bash
+    - name: Execute release action
+      id: action
+      shell: python
       env:
         BRANCH_NAME: ${{ inputs.branch-name }}
         FORCE_PRERELEASE: ${{ inputs.force-prerelease }}
         FORCE_DRAFT: ${{ inputs.force-draft }}
-      run: bash "${{ github.action_path }}/src/release_strategy.sh"
+        COMMAND: ${{ inputs.command }}
+        PRIMARY_LANGUAGE: ${{ inputs.primary-language }}
+        RELEASE_TAG: ${{ inputs.release-tag }}
+        RELEASE_STRATEGY: ${{ inputs.release-strategy }}
+        BUILD_TARGET: ${{ inputs.build-target }}
+        SUMMARY_COMPONENTS: ${{ inputs.summary-components }}
+      run: |
+        import json
+        import os
+        import subprocess
+        import sys
+        from datetime import datetime
+        from pathlib import Path
+
+        # ============================================================================
+        # Workflow Common Helpers
+        # ============================================================================
+        def append_to_file(path_env: str, content: str) -> None:
+            """Append content to a GitHub Actions environment file."""
+            file_path = os.environ.get(path_env)
+            if not file_path:
+                return
+            path = Path(file_path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("a", encoding="utf-8") as handle:
+                handle.write(content)
+
+        def write_output(name: str, value: str) -> None:
+            """Write an output value for downstream steps."""
+            append_to_file("GITHUB_OUTPUT", f"{name}={value}\n")
+
+        def append_summary(text: str) -> None:
+            """Append Markdown text to the GitHub Actions step summary."""
+            append_to_file("GITHUB_STEP_SUMMARY", text)
+
+        def append_summary_line(line: str) -> None:
+            """Append a single line to the GitHub Actions step summary."""
+            append_summary(f"{line}\n")
+
+        def log_warning(message: str) -> None:
+            """Emit a GitHub Actions warning message."""
+            print(f"::warning::{message}")
+
+        def build_release_summary(context: dict) -> str:
+            """Generate a Markdown summary for release job results."""
+            components = context.get("components", {})
+            lines = [
+                "# 🚀 Release Build Results",
+                "",
+                f"**Project Type:** {context.get('primary_language', 'unknown')}",
+                f"**Build Target:** {context.get('build_target', 'all')}",
+                f"**Release Tag:** {context.get('release_tag', 'n/a')}",
+                f"**Release Strategy:** {context.get('release_strategy', 'n/a')}",
+                f"**Branch:** {context.get('branch', 'n/a')}",
+                "",
+                "| Component | Status |",
+                "|-----------|--------|",
+            ]
+            for component, status in components.items():
+                lines.append(f"| {component} | {status} |")
+
+            if context.get("release_created"):
+                lines.extend([
+                    "",
+                    f"🎉 **Release created: {context.get('release_tag', 'n/a')}**",
+                ])
+                if context.get("auto_prerelease"):
+                    lines.append("⚠️ **Pre-release** - for testing purposes")
+                elif context.get("auto_draft"):
+                    lines.append("📝 **Draft release** - review before publishing")
+                else:
+                    lines.append("🚀 **Stable release** - ready for production")
+
+            lines.append("")
+            return "\n".join(lines)
+
+        # ============================================================================
+        # Release Strategy Logic
+        # ============================================================================
+        def release_strategy_command() -> None:
+            """Determine release strategy based on branch."""
+            branch = os.environ.get("BRANCH_NAME", "")
+            force_prerelease = os.environ.get("FORCE_PRERELEASE", "false").lower() == "true"
+            force_draft = os.environ.get("FORCE_DRAFT", "false").lower() == "true"
+
+            # Default flags
+            auto_prerelease = "false"
+            auto_draft = "false"
+            strategy = "stable"
+
+            # Strategy logic
+            if force_prerelease:
+                strategy = "prerelease"
+            elif force_draft:
+                strategy = "draft"
+            elif branch == "main":
+                strategy = "stable"
+                auto_draft = "true"  # Main releases start as drafts for review
+            elif branch == "develop":
+                strategy = "prerelease"
+                auto_prerelease = "true"
+            else:
+                # Feature branches = prerelease
+                strategy = "prerelease"
+                auto_prerelease = "true"
+
+            # Set boolean flags
+            is_stable = "true" if strategy == "stable" else "false"
+            is_prerelease = "true" if strategy == "prerelease" else "false"
+            is_draft = "true" if strategy == "draft" else "false"
+
+            # Write outputs
+            write_output("strategy", strategy)
+            write_output("auto-prerelease", auto_prerelease)
+            write_output("auto-draft", auto_draft)
+            write_output("is-stable", is_stable)
+            write_output("is-prerelease", is_prerelease)
+            write_output("is-draft", is_draft)
+
+            # Summary
+            summary_lines = [
+                "## 📦 Release Strategy",
+                f"- **Branch:** `{branch}`",
+                f"- **Strategy:** `{strategy}`",
+                f"- **Auto-prerelease:** {auto_prerelease}",
+                f"- **Auto-draft:** {auto_draft}",
+                "",
+                "### Strategy Logic",
+                "- `main` branch → Stable release (created as DRAFT for review)",
+                "- `develop` branch → Pre-release (published DIRECTLY)",
+                "- Feature branches → Pre-release (published DIRECTLY)",
+            ]
+            append_summary("\n".join(summary_lines) + "\n")
+            print(f"✅ Release strategy determined: {strategy}")
+
+        # ============================================================================
+        # Changelog Generation
+        # ============================================================================
+        def run_git(args: list) -> subprocess.CompletedProcess:
+            """Run git command and return result."""
+            return subprocess.run(["git"] + args, capture_output=True, text=True)
+
+        def changelog_command() -> None:
+            """Generate changelog from git commits."""
+            branch = os.environ.get("BRANCH_NAME", "")
+            primary_language = os.environ.get("PRIMARY_LANGUAGE", "unknown")
+            strategy = os.environ.get("RELEASE_STRATEGY", "stable")
+            auto_prerelease = os.environ.get("FORCE_PRERELEASE", "false").lower() == "true"
+            auto_draft = os.environ.get("FORCE_DRAFT", "false").lower() == "true"
+
+            # Get latest tag
+            describe = run_git(["describe", "--tags", "--abbrev=0"])
+            last_tag = describe.stdout.strip() if describe.returncode == 0 else ""
+
+            if last_tag:
+                log_args = [f"{last_tag}..HEAD"]
+                header = f"### 📋 Commits since {last_tag}:\n"
+            else:
+                log_args = []
+                header = "### 📋 Initial Release Commits:\n"
+
+            commits = run_git(["log"] + log_args + ["--pretty=%s (%h)"]).stdout.splitlines()
+            commits = [entry.strip() for entry in commits if entry.strip()]
+
+            lines = ["## 🚀 What's Changed", "", header]
+            if commits:
+                lines.extend(f"- {commit}" for commit in commits)
+            else:
+                lines.append("- No commits available")
+
+            lines.extend([
+                "",
+                "### 🎯 Release Information",
+                f"- **Branch:** {branch}",
+                f"- **Release Type:** {strategy}",
+                f"- **Primary Language:** {primary_language}",
+            ])
+
+            if auto_prerelease:
+                lines.append("\n⚠️ **This is a pre-release version** - use for testing purposes.")
+            if auto_draft:
+                lines.append("\n📝 **This is a draft release** - review before making public.")
+
+            changelog = "\n".join(lines) + "\n"
+            write_output("changelog", changelog)
+            append_summary("## 📝 Changelog Generated\n\n" + changelog)
+            print("✅ Changelog generated successfully")
+
+        # ============================================================================
+        # Release Summary Generation
+        # ============================================================================
+        def summary_command() -> None:
+            """Generate release summary from component results."""
+            branch = os.environ.get("BRANCH_NAME", "")
+            primary_language = os.environ.get("PRIMARY_LANGUAGE", "unknown")
+            release_tag = os.environ.get("RELEASE_TAG", "n/a")
+            release_strategy = os.environ.get("RELEASE_STRATEGY", "n/a")
+            build_target = os.environ.get("BUILD_TARGET", "all")
+            auto_prerelease = os.environ.get("FORCE_PRERELEASE", "false").lower() == "true"
+            auto_draft = os.environ.get("FORCE_DRAFT", "false").lower() == "true"
+
+            # Parse components JSON
+            components_json = os.environ.get("SUMMARY_COMPONENTS", "{}")
+            try:
+                components = json.loads(components_json)
+            except json.JSONDecodeError:
+                components = {}
+
+            context = {
+                "primary_language": primary_language,
+                "build_target": build_target,
+                "release_tag": release_tag,
+                "release_strategy": release_strategy,
+                "branch": branch,
+                "components": components,
+                "release_created": True,
+                "auto_prerelease": auto_prerelease,
+                "auto_draft": auto_draft,
+            }
+
+            append_summary(build_release_summary(context))
+
+            failures = any(status.lower() == "failure" for status in components.values())
+            if failures:
+                append_summary_line("❌ **Some components failed**")
+                log_warning("Some components failed - check the summary above")
+            else:
+                append_summary_line("✅ **All components completed successfully**")
+
+            print("✅ Release summary generated successfully")
+
+        # ============================================================================
+        # Main Execution
+        # ============================================================================
+        def main():
+            command = os.environ.get("COMMAND", "strategy").lower()
+
+            if command == "strategy":
+                release_strategy_command()
+            elif command == "changelog":
+                changelog_command()
+            elif command == "summary":
+                summary_command()
+            else:
+                print(f"::error::Unknown command: {command}")
+                sys.exit(1)
+
+        if __name__ == "__main__":
+            main()
