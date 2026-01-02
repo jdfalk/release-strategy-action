@@ -16,14 +16,14 @@ auto_draft="false"
 strategy="stable"
 
 # Strategy logic
-if [[ "$force_prerelease" == "true" ]]; then
+if [[ $force_prerelease == "true" ]]; then
   strategy="prerelease"
-elif [[ "$force_draft" == "true" ]]; then
+elif [[ $force_draft == "true" ]]; then
   strategy="draft"
-elif [[ "$branch" == "main" ]]; then
+elif [[ $branch == "main" ]]; then
   strategy="stable"
-  auto_draft="true"  # Main releases start as drafts for review
-elif [[ "$branch" == "develop" ]]; then
+  auto_draft="true" # Main releases start as drafts for review
+elif [[ $branch == "develop" ]]; then
   strategy="prerelease"
   auto_prerelease="true"
 else
@@ -38,15 +38,15 @@ is_prerelease="false"
 is_draft="false"
 
 case "$strategy" in
-  stable)
-    is_stable="true"
-    ;;
-  prerelease)
-    is_prerelease="true"
-    ;;
-  draft)
-    is_draft="true"
-    ;;
+stable)
+  is_stable="true"
+  ;;
+prerelease)
+  is_prerelease="true"
+  ;;
+draft)
+  is_draft="true"
+  ;;
 esac
 
 # Write outputs
@@ -57,7 +57,7 @@ esac
   echo "is-stable=$is_stable"
   echo "is-prerelease=$is_prerelease"
   echo "is-draft=$is_draft"
-} >> "$GITHUB_OUTPUT"
+} >>"$GITHUB_OUTPUT"
 
 # Summary
 {
@@ -68,9 +68,9 @@ esac
   echo "- **Auto-draft:** $auto_draft"
   echo ""
   echo "### Strategy Logic"
-  echo "- \`main\` branch → Stable release (created as DRAFT for review)"
-  echo "- \`develop\` branch → Pre-release (published DIRECTLY)"
+  echo '- `main` branch → Stable release (created as DRAFT for review)'
+  echo '- `develop` branch → Pre-release (published DIRECTLY)'
   echo "- Feature branches → Pre-release (published DIRECTLY)"
-} >> "$GITHUB_STEP_SUMMARY"
+} >>"$GITHUB_STEP_SUMMARY"
 
 echo "✅ Release strategy determined: $strategy"

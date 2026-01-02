@@ -1,15 +1,19 @@
 # Release Strategy & Changelog Action
 
-Comprehensive release automation action that determines release strategy, generates changelogs, and builds release summaries. This action consolidates three separate workflow helper scripts into a single composite action.
+Comprehensive release automation action that determines release strategy,
+generates changelogs, and builds release summaries. This action consolidates
+three separate workflow helper scripts into a single composite action.
 
 ## Features
 
-✅ **Release Strategy Determination** - Analyze branch and configuration to determine if release should be stable/prerelease/draft
-✅ **Changelog Generation** - Automatically generate release notes from git commit history
-✅ **Release Summary Building** - Create formatted summary of release components and results
-✅ **Branch-Aware Logic** - Different behavior for `main`, `develop`, and feature branches
-✅ **Override Controls** - Force specific release types when needed
-✅ **Embedded Python/Bash** - No external dependencies needed (composite action)
+✅ **Release Strategy Determination** - Analyze branch and configuration to
+determine if release should be stable/prerelease/draft ✅ **Changelog
+Generation** - Automatically generate release notes from git commit history ✅
+**Release Summary Building** - Create formatted summary of release components
+and results ✅ **Branch-Aware Logic** - Different behavior for `main`,
+`develop`, and feature branches ✅ **Override Controls** - Force specific
+release types when needed ✅ **Embedded Python/Bash** - No external dependencies
+needed (composite action)
 
 ## Usage
 
@@ -38,9 +42,9 @@ Comprehensive release automation action that determines release strategy, genera
   uses: jdfalk/release-strategy-action@v2
   with:
     branch-name: ${{ github.ref_name }}
-    command: "changelog"
-    primary-language: "go"
-    release-strategy: "stable"
+    command: 'changelog'
+    primary-language: 'go'
+    release-strategy: 'stable'
 
 - name: Create release with changelog
   uses: softprops/action-gh-release@v1
@@ -56,12 +60,13 @@ Comprehensive release automation action that determines release strategy, genera
   uses: jdfalk/release-strategy-action@v2
   with:
     branch-name: ${{ github.ref_name }}
-    command: "summary"
-    primary-language: "multi"
+    command: 'summary'
+    primary-language: 'multi'
     release-tag: ${{ env.RELEASE_TAG }}
-    release-strategy: "stable"
-    build-target: "go,python"
-    summary-components: '{"Go": "success", "Python": "success", "Docker": "skipped"}'
+    release-strategy: 'stable'
+    build-target: 'go,python'
+    summary-components:
+      '{"Go": "success", "Python": "success", "Docker": "skipped"}'
 ```
 
 ## Inputs
@@ -119,7 +124,7 @@ Force a specific strategy regardless of branch:
 ```yaml
 with:
   branch-name: main
-  force-prerelease: true  # Override main → prerelease
+  force-prerelease: true # Override main → prerelease
 ```
 
 ## Changelog Generation
@@ -131,14 +136,17 @@ The `changelog` command generates release notes containing:
 - **Status Badges**: Indicates if prerelease or draft
 
 Example generated changelog:
+
 ```markdown
 ## 🚀 What's Changed
 
 ### 📋 Commits since v1.2.3:
+
 - feat(api): Add new endpoint (abc123)
 - fix(core): Resolve memory leak (def456)
 
 ### 🎯 Release Information
+
 - **Branch:** main
 - **Release Type:** stable
 - **Primary Language:** go
@@ -156,14 +164,12 @@ The `summary` command creates a structured release summary displaying:
 - Overall status with emoji indicators
 
 Example summary output:
+
 ```markdown
 # 🚀 Release Build Results
 
-**Project Type:** go
-**Build Target:** all
-**Release Tag:** v1.2.3
-**Release Strategy:** stable
-**Branch:** main
+**Project Type:** go **Build Target:** all **Release Tag:** v1.2.3 **Release
+Strategy:** stable **Branch:** main
 
 | Component | Status  |
 | --------- | ------- |
@@ -171,19 +177,20 @@ Example summary output:
 | Python    | skipped |
 | Docker    | success |
 
-🎉 **Release created: v1.2.3**
-📝 **Draft release** - review before publishing
+🎉 **Release created: v1.2.3** 📝 **Draft release** - review before publishing
 ✅ **All components completed successfully**
 ```
 
 ## Comparison with Previous Version
 
 ### v1.0.0 (Original)
+
 - Single command: determine release strategy only
 - Called external bash script `src/release_strategy.sh`
 - Limited to strategy determination
 
 ### v2.0.0 (Enhanced)
+
 - **Three commands**: strategy, changelog, summary
 - **Embedded Python**: All logic embedded in action.yml (no external scripts)
 - **Consolidated Scripts**: Merges logic from:
@@ -191,7 +198,8 @@ Example summary output:
   - `generate_release_summary.py` (summary building)
   - `generate-changelog.sh` (changelog generation)
 - **Extended Outputs**: New changelog and summary capabilities
-- **Backward Compatible**: Default command remains `strategy` for existing workflows
+- **Backward Compatible**: Default command remains `strategy` for existing
+  workflows
 
 ## Examples
 
@@ -224,8 +232,8 @@ jobs:
         uses: jdfalk/release-strategy-action@v2
         with:
           branch-name: ${{ github.ref_name }}
-          command: "changelog"
-          primary-language: "go"
+          command: 'changelog'
+          primary-language: 'go'
           release-strategy: ${{ steps.strategy.outputs.strategy }}
 
       - name: Create release
@@ -246,11 +254,11 @@ jobs:
   uses: jdfalk/release-strategy-action@v2
   with:
     branch-name: ${{ github.ref_name }}
-    command: "summary"
-    primary-language: "multi"
+    command: 'summary'
+    primary-language: 'multi'
     release-tag: ${{ env.RELEASE_TAG }}
-    release-strategy: "stable"
-    build-target: "go,python,docker"
+    release-strategy: 'stable'
+    build-target: 'go,python,docker'
     summary-components: |
       {
         "Go": "${{ job.go.result }}",
@@ -261,9 +269,11 @@ jobs:
 
 ## Migration Guide (v1 → v2)
 
-Existing workflows using v1.0.0 will continue to work without changes. The `strategy` command is the default:
+Existing workflows using v1.0.0 will continue to work without changes. The
+`strategy` command is the default:
 
 **v1.0.0 (still works):**
+
 ```yaml
 - uses: jdfalk/release-strategy-action@v1
   id: strategy
@@ -272,21 +282,25 @@ Existing workflows using v1.0.0 will continue to work without changes. The `stra
 ```
 
 **v2.0.0 (updated, recommended):**
+
 ```yaml
 - uses: jdfalk/release-strategy-action@v2
   id: strategy
   with:
     branch-name: ${{ github.ref_name }}
-    command: "strategy"  # Optional (default)
+    command: 'strategy' # Optional (default)
 ```
 
 To use new changelog/summary features, explicitly set the `command` input.
 
 ## Related Actions
 
-- [ci-workflow-helpers-action](https://github.com/jdfalk/ci-workflow-helpers-action) - Multi-language CI helpers
-- [release-go-action](https://github.com/jdfalk/release-go-action) - Go-specific release automation
-- [release-python-action](https://github.com/jdfalk/release-python-action) - Python-specific release automation
+- [ci-workflow-helpers-action](https://github.com/jdfalk/ci-workflow-helpers-action) -
+  Multi-language CI helpers
+- [release-go-action](https://github.com/jdfalk/release-go-action) - Go-specific
+  release automation
+- [release-python-action](https://github.com/jdfalk/release-python-action) -
+  Python-specific release automation
 
 ## License
 

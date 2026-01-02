@@ -5,23 +5,23 @@
 name: Enable Auto-Merge on Label
 
 on:
-    pull_request:
-        types: [opened, synchronize, labeled]
+  pull_request:
+    types: [opened, synchronize, labeled]
 
 permissions:
-    contents: write
-    pull-requests: write
+  contents: write
+  pull-requests: write
 
 jobs:
-    set-auto-merge:
-        if: contains(github.event.pull_request.labels.*.name, 'auto-merge')
-        runs-on: ubuntu-latest
-        steps:
-            - name: Set auto-merge to REBASE
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  PR_NODE_ID: ${{ github.event.pull_request.node_id }}
-              run: |
-                  set -euo pipefail
-                  # Attempt to enable auto-merge using REBASE
-                  gh api graphql -f query='mutation($pr:ID!){ enablePullRequestAutoMerge(input:{ pullRequestId:$pr, mergeMethod: REBASE }){ pullRequest{ number autoMergeRequest{ enabledBy{ login } } } } }' -F pr="$PR_NODE_ID" || echo "Auto-merge enable failed (ensure repo auto-merge setting is enabled)"
+  set-auto-merge:
+    if: contains(github.event.pull_request.labels.*.name, 'auto-merge')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set auto-merge to REBASE
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
+        run: |
+          set -euo pipefail
+          # Attempt to enable auto-merge using REBASE
+          gh api graphql -f query='mutation($pr:ID!){ enablePullRequestAutoMerge(input:{ pullRequestId:$pr, mergeMethod: REBASE }){ pullRequest{ number autoMergeRequest{ enabledBy{ login } } } } }' -F pr="$PR_NODE_ID" || echo "Auto-merge enable failed (ensure repo auto-merge setting is enabled)"

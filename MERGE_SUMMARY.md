@@ -1,12 +1,14 @@
 # Release Strategy Action - Script Merge Summary
 
-**Date**: December 29, 2025
-**Version**: 2.0.0
-**Merge Source**: ghcommon/.github/workflows/scripts/
+**Date**: December 29, 2025 **Version**: 2.0.0 **Merge Source**:
+ghcommon/.github/workflows/scripts/
 
 ## Overview
 
-Successfully merged three release workflow helper scripts from the `ghcommon` repository into the `release-strategy-action`. The action has been upgraded from a single-command tool to a comprehensive multi-command release automation action.
+Successfully merged three release workflow helper scripts from the `ghcommon`
+repository into the `release-strategy-action`. The action has been upgraded from
+a single-command tool to a comprehensive multi-command release automation
+action.
 
 ## Scripts Merged
 
@@ -16,13 +18,16 @@ Successfully merged three release workflow helper scripts from the `ghcommon` re
 - **Lines Merged**: `release_strategy()` function (lines 191-213)
 - **Functionality**:
   - Determines release strategy based on git branch
-  - Supports `stable` (main), `prerelease` (develop/feature), and `draft` strategies
-  - Generates boolean output flags: `auto-prerelease`, `auto-draft`, `is-stable`, `is-prerelease`, `is-draft`
+  - Supports `stable` (main), `prerelease` (develop/feature), and `draft`
+    strategies
+  - Generates boolean output flags: `auto-prerelease`, `auto-draft`,
+    `is-stable`, `is-prerelease`, `is-draft`
   - Appends formatted summary to GitHub Actions step summary
 
 **Key Features**:
 
-- Branch-aware logic: `main` → stable (draft), `develop` → prerelease, others → prerelease
+- Branch-aware logic: `main` → stable (draft), `develop` → prerelease, others →
+  prerelease
 - Force overrides via `force-prerelease` and `force-draft` inputs
 - Clear output flags for downstream conditional logic
 
@@ -66,14 +71,17 @@ Successfully merged three release workflow helper scripts from the `ghcommon` re
 
 ### From `workflow_common.py`
 
-The following helper functions were extracted and embedded to eliminate dependencies:
+The following helper functions were extracted and embedded to eliminate
+dependencies:
 
-1. **`append_to_file(path_env, content)`** - Appends to GitHub Actions environment files
+1. **`append_to_file(path_env, content)`** - Appends to GitHub Actions
+   environment files
 2. **`write_output(name, value)`** - Writes outputs to `GITHUB_OUTPUT`
 3. **`append_summary(text)`** - Appends to `GITHUB_STEP_SUMMARY`
 4. **`append_summary_line(line)`** - Appends single line to summary
 5. **`log_warning(message)`** - Emits GitHub Actions warning annotation
-6. **`build_release_summary(context)`** - Generates markdown summary (146 lines from workflow_common.py)
+6. **`build_release_summary(context)`** - Generates markdown summary (146 lines
+   from workflow_common.py)
 7. **`run_git(args)`** - Executes git commands (helper for changelog)
 
 ## File Structure Changes
@@ -117,7 +125,8 @@ release-strategy-action/
   - `changelog`: Generated changelog content
   - (summary command has no direct output, uses step summary)
 
-- **Shell runtime changed**: From bash to python (composite action with embedded python)
+- **Shell runtime changed**: From bash to python (composite action with embedded
+  python)
 
 - **Step ID renamed**: From `strategy` to `action` (to serve all commands)
 
@@ -138,8 +147,8 @@ release-strategy-action/
 
 ## Lines of Code Summary
 
-| Component               | Source                                      | Lines    | Status     |
-| ----------------------- | ------------------------------------------- | -------- | ---------- |
+| Component               | Source                                      | Lines    | Status      |
+| ----------------------- | ------------------------------------------- | -------- | ----------- |
 | release_strategy()      | release_workflow.py                         | 23       | ✅ Merged   |
 | changelog_command()     | release_workflow.py + generate-changelog.sh | 45       | ✅ Merged   |
 | summary_command()       | generate_release_summary.py                 | 35       | ✅ Merged   |
@@ -154,17 +163,20 @@ release-strategy-action/
 - Default `command` is `strategy`, maintaining original behavior
 - All v1.0.0 workflows continue to work without modification
 - Original inputs (`branch-name`, `force-prerelease`, `force-draft`) unchanged
-- Original outputs (`strategy`, `auto-prerelease`, `auto-draft`, `is-*` flags) unchanged
+- Original outputs (`strategy`, `auto-prerelease`, `auto-draft`, `is-*` flags)
+  unchanged
 
 ### Migration Path
 
 - **No action required** for existing v1.0.0 workflows
-- **Optional enhancement**: Set `command: "changelog"` or `command: "summary"` to use new features
+- **Optional enhancement**: Set `command: "changelog"` or `command: "summary"`
+  to use new features
 - **Recommended**: Update to v2.0.0 for new capabilities
 
 ## Testing Recommendations
 
 1. **Strategy Command** (default):
+
    ```yaml
    - uses: jdfalk/release-strategy-action@v2
      with:
@@ -173,12 +185,13 @@ release-strategy-action/
    ```
 
 2. **Changelog Command**:
+
    ```yaml
    - uses: jdfalk/release-strategy-action@v2
      with:
        branch-name: develop
-       command: "changelog"
-       primary-language: "go"
+       command: 'changelog'
+       primary-language: 'go'
    # Should output: changelog with commits since last tag
    ```
 
@@ -187,8 +200,8 @@ release-strategy-action/
    - uses: jdfalk/release-strategy-action@v2
      with:
        branch-name: main
-       command: "summary"
-       primary-language: "multi"
+       command: 'summary'
+       primary-language: 'multi'
        summary-components: '{"Go": "success", "Python": "failure"}'
    # Should append formatted summary to step summary
    ```
@@ -196,12 +209,14 @@ release-strategy-action/
 ## Dependencies Eliminated
 
 Before: External dependencies on ghcommon scripts:
+
 - `release_workflow.py` (requires Python 3.7+, requests library)
 - `generate_release_summary.py` (requires workflow_common.py)
 - `generate-changelog.sh` (requires bash)
 - `workflow_common.py` (shared helpers)
 
 After: **No external dependencies**
+
 - All logic embedded in single composite action
 - Python 3.x runtime (GitHub Actions default)
 - No external script execution
@@ -210,6 +225,7 @@ After: **No external dependencies**
 ## Future Enhancements
 
 Potential improvements for consideration:
+
 - Add version generation logic (from `generate_version()` function)
 - Add language detection (from `detect_languages()` function)
 - Support for custom changelog templates
@@ -248,17 +264,16 @@ Potential improvements for consideration:
 
 ## References
 
-**Source Repository**: ghcommon
-**Source Scripts**:
+**Source Repository**: ghcommon **Source Scripts**:
+
 - `.github/workflows/scripts/release_workflow.py` (426 lines)
 - `.github/workflows/scripts/generate_release_summary.py` (60 lines)
 - `.github/workflows/scripts/generate-changelog.sh` (45 lines)
 - `.github/workflows/scripts/workflow_common.py` (146 lines)
 
-**Target Repository**: release-strategy-action
-**Result**: v2.0.0 composite action with embedded functionality
+**Target Repository**: release-strategy-action **Result**: v2.0.0 composite
+action with embedded functionality
 
 ---
 
-**Merged by**: GitHub Copilot
-**Status**: ✅ Complete and ready for release
+**Merged by**: GitHub Copilot **Status**: ✅ Complete and ready for release

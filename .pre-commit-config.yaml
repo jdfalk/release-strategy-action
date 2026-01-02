@@ -184,9 +184,9 @@ repos:
     rev: v0.14.3
     hooks:
       - id: ruff-check
-        args: [--config=.github/linters/ruff.toml, --fix]
+        args: [--config=ruff.toml, --fix]
       - id: ruff-format
-        args: [--config=.github/linters/ruff.toml]
+        args: [--config=ruff.toml]
 
   # Pyupgrade for modernizing Python code (Dict->dict, List->list, etc.)
   - repo: https://github.com/asottile/pyupgrade
@@ -253,7 +253,7 @@ repos:
     rev: v1.37.1
     hooks:
       - id: yamllint
-        args: [--config-file=.yaml-lint.yml]
+        args: [--config-file=.yamllint]
 
   # Markdown formatting and linting
   - repo: https://github.com/igorshubovych/markdownlint-cli
