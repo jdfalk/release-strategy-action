@@ -88,7 +88,7 @@ dependencies:
 
 ### Before (v1.0.0)
 
-```
+```text
 release-strategy-action/
 ├── action.yml (70 lines)
 ├── src/
@@ -99,7 +99,7 @@ release-strategy-action/
 
 ### After (v2.0.0)
 
-```
+```text
 release-strategy-action/
 ├── action.yml (346 lines - embedded Python)
 ├── src/

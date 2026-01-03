@@ -1,5 +1,5 @@
 <!-- file: TODO.md -->
-<!-- version: 1.0.0 -->
+<!-- version: 1.0.3 -->
 <!-- guid: 46eae8ba-99ef-4dcb-89a2-50efa4234f1f -->
 
 # TODO - release-strategy-action
@@ -40,4 +40,8 @@ Determines release strategy based on branch, tags, and commit history
 
 ---
 
-*This TODO.md was automatically generated on 2026-01-02*
+<!-- markdownlint-disable MD036 -->
+
+This TODO.md was automatically generated on 2026-01-02.
+
+<!-- markdownlint-enable MD036 -->
