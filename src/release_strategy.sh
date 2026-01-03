@@ -1,14 +1,16 @@
 #!/bin/bash
 # file: src/release_strategy.sh
-# version: 1.0.0
+# version: 1.0.1
 # guid: 7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d
 
 set -euo pipefail
 
 # Determine release strategy based on branch
 branch="${BRANCH_NAME}"
-force_prerelease="${FORCE_PRERELEASE,,}"
-force_draft="${FORCE_DRAFT,,}"
+force_prerelease_env="${FORCE_PRERELEASE:-}"
+force_draft_env="${FORCE_DRAFT:-}"
+force_prerelease="${force_prerelease_env,,}"
+force_draft="${force_draft_env,,}"
 
 # Default flags
 auto_prerelease="false"
@@ -68,7 +70,9 @@ esac
   echo "- **Auto-draft:** $auto_draft"
   echo ""
   echo "### Strategy Logic"
+  # shellcheck disable=SC2016
   echo '- `main` branch → Stable release (created as DRAFT for review)'
+  # shellcheck disable=SC2016
   echo '- `develop` branch → Pre-release (published DIRECTLY)'
   echo "- Feature branches → Pre-release (published DIRECTLY)"
 } >>"$GITHUB_STEP_SUMMARY"
