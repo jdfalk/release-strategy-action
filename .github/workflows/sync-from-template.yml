@@ -1,0 +1,180 @@
+# file: .github/workflows/sync-from-template.yml
+# version: 1.0.0
+# guid: 8f9e0a1b-2c3d-4e5f-6a7b-8c9d0e1f2a3b
+name: Sync from Template
+
+on:
+  schedule:
+    # Daily at 6am UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (show changes without committing)'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: Checkout template repo
+        uses: actions/checkout@v4
+        with:
+          repository: jdfalk/jft-github-actions
+          path: template
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: Sync files from template
+        id: sync
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TEMPLATE_DIR="template"
+          CHANGED_FILES=()
+
+          # Files and directories to sync
+          SYNC_PATTERNS=(
+            ".github/instructions/"
+            ".github/agents/"
+            ".github/ISSUE_TEMPLATE/"
+            ".github/dependabot.yml"
+            ".pre-commit-config.yaml"
+            ".yamllint"
+            ".prettierrc"
+            "ruff.toml"
+          )
+
+          # Files to never overwrite (local overrides)
+          EXCLUDE_PATTERNS=(
+            "*.local.instructions.md"
+            ".github/workflows/"
+            "README.md"
+            "CHANGELOG.md"
+            "action.yml"
+          )
+
+          echo "::group::Syncing files from template"
+
+          for pattern in "${SYNC_PATTERNS[@]}"; do
+            if [[ -d "$TEMPLATE_DIR/$pattern" ]]; then
+              # Directory - copy all files recursively
+              echo "Syncing directory: $pattern"
+              mkdir -p "$pattern"
+
+              while IFS= read -r -d '' file; do
+                relative_path="${file#$TEMPLATE_DIR/}"
+
+                # Check if file should be excluded
+                should_exclude=false
+                for exclude in "${EXCLUDE_PATTERNS[@]}"; do
+                  if [[ "$relative_path" == *"$exclude"* ]]; then
+                    should_exclude=true
+                    break
+                  fi
+                done
+
+                if [[ "$should_exclude" == "true" ]]; then
+                  echo "  Skipping (excluded): $relative_path"
+                  continue
+                fi
+
+                # Copy if different or doesn't exist
+                if [[ ! -f "$relative_path" ]] || ! cmp -s "$file" "$relative_path"; then
+                  echo "  Updating: $relative_path"
+                  mkdir -p "$(dirname "$relative_path")"
+                  cp "$file" "$relative_path"
+                  CHANGED_FILES+=("$relative_path")
+                fi
+              done < <(find "$TEMPLATE_DIR/$pattern" -type f -print0)
+
+            elif [[ -f "$TEMPLATE_DIR/$pattern" ]]; then
+              # Single file
+              echo "Syncing file: $pattern"
+
+              # Check if file should be excluded
+              should_exclude=false
+              for exclude in "${EXCLUDE_PATTERNS[@]}"; do
+                if [[ "$pattern" == *"$exclude"* ]]; then
+                  should_exclude=true
+                  break
+                fi
+              done
+
+              if [[ "$should_exclude" == "true" ]]; then
+                echo "  Skipping (excluded): $pattern"
+                continue
+              fi
+
+              if [[ ! -f "$pattern" ]] || ! cmp -s "$TEMPLATE_DIR/$pattern" "$pattern"; then
+                echo "  Updating: $pattern"
+                mkdir -p "$(dirname "$pattern")"
+                cp "$TEMPLATE_DIR/$pattern" "$pattern"
+                CHANGED_FILES+=("$pattern")
+              fi
+            fi
+          done
+
+          echo "::endgroup::"
+
+          # Check if there are changes
+          if [[ ${#CHANGED_FILES[@]} -eq 0 ]]; then
+            echo "No changes detected"
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Changed files:"
+          printf '%s\n' "${CHANGED_FILES[@]}"
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          echo "changed_count=${#CHANGED_FILES[@]}" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push changes
+        if: steps.sync.outputs.has_changes == 'true' && inputs.dry_run != true
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add .
+          git commit -m "chore(sync): sync files from jft-github-actions template
+
+          Synced ${{ steps.sync.outputs.changed_count }} file(s) from template repository.
+
+          This is an automated sync from the jft-github-actions template repository."
+
+          git push
+
+      - name: Summary
+        shell: bash
+        run: |
+          if [[ "${{ steps.sync.outputs.has_changes }}" == "true" ]]; then
+            if [[ "${{ inputs.dry_run }}" == "true" ]]; then
+              echo "### 🔍 Dry Run - Changes Detected" >> "$GITHUB_STEP_SUMMARY"
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "Found ${{ steps.sync.outputs.changed_count }} file(s) that would be updated." >> "$GITHUB_STEP_SUMMARY"
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "Run without dry_run to apply changes." >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "### ✅ Sync Complete" >> "$GITHUB_STEP_SUMMARY"
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "Successfully synced ${{ steps.sync.outputs.changed_count }} file(s) from template." >> "$GITHUB_STEP_SUMMARY"
+            fi
+          else
+            echo "### ℹ️ No Changes" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "All files are already up to date." >> "$GITHUB_STEP_SUMMARY"
+          fi
