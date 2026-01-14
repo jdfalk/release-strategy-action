@@ -24,13 +24,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 1
 
       - name: Checkout template repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: jdfalk/jft-github-actions
           path: template
