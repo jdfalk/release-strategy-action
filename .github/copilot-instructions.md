@@ -1,48 +1,62 @@
 <!-- file: .github/copilot-instructions.md -->
-<!-- version: 1.1.0 -->
+<!-- version: 1.1.1 -->
 <!-- guid: a3b4c5d6-e7f8-9012-a890-123456789012 -->
 <!-- last-edited: 2026-01-19 -->
 
 # AI Agent Instructions (Standard)
 
-- Use VS Code tasks for non-git operations; prefer MCP GitHub tools for git operations.
+- Use VS Code tasks for non-git operations; prefer MCP GitHub tools for git
+  operations.
 - Commits must use conventional commits (type(scope): description).
 - Include versioned headers in docs/configs and bump versions on changes.
-- This is a composite GitHub Action that embeds Python logic directly in action.yml.
-- All changes to release strategy logic should be made in the embedded Python script within action.yml.
+- This is a composite GitHub Action that embeds Python logic directly in
+  action.yml.
+- All changes to release strategy logic should be made in the embedded Python
+  script within action.yml.
 - Follow GitHub Actions composite action best practices.
 - Provide concise plans and progress updates.
 
 ## 🎯 Communication Protocol
 
-**Error Response Policy**: When errors occur or corrections are needed, skip apologies and respond with "Aye Aye Captain" followed immediately by the corrected solution. Time efficiency is critical—acknowledge, correct, and move forward without unnecessary preamble.
+**Error Response Policy**: When errors occur or corrections are needed, skip
+apologies and respond with "Aye Aye Captain" followed immediately by the
+corrected solution. Time efficiency is critical—acknowledge, correct, and move
+forward without unnecessary preamble.
 
 ## 📁 File Organization Conventions
 
 **Repository Structure**:
 
-- All files require versioned headers: `<!-- file: path -->`, `<!-- version: x.y.z -->`, `<!-- guid: uuid -->`, `<!-- last-edited: YYYY-MM-DD -->`
-- Always increment version numbers on file changes (patch/minor/major semantic versioning)
+- All files require versioned headers: `<!-- file: path -->`,
+  `<!-- version: x.y.z -->`, `<!-- guid: uuid -->`,
+  `<!-- last-edited: YYYY-MM-DD -->`
+- Always increment version numbers on file changes (patch/minor/major semantic
+  versioning)
 - Update `last-edited` date whenever making changes
 
 ## 🔧 Critical AI Agent Workflows
 
-Use VS Code tasks for non-git operations (build, lint, generate). For git operations, prefer:
+Use VS Code tasks for non-git operations (build, lint, generate). For git
+operations, prefer:
 
-1. MCP GitHub tools (preferred), 2) safe-ai-util (fallback), 3) native git (last resort).
+1. MCP GitHub tools (preferred), 2) safe-ai-util (fallback), 3) native git (last
+   resort).
 
 ### Git Operations (Policy)
 
 - Prefer MCP GitHub tools or safe-ai-util for all git actions (add/commit/push).
 - Avoid VS Code git tasks; keep git automation out of editor tasks.
 - All commits MUST use conventional commit format: `type(scope): description`.
-- See `.github/instructions/commit-messages.instructions.md` for detailed commit message rules.
+- See `.github/instructions/commit-messages.instructions.md` for detailed commit
+  message rules.
 
 ### Terminal Command Length Limits (CRITICAL)
 
 **MANDATORY RULE: Long terminal commands WILL fail and die.**
 
-Terminal commands with excessive length (either many arguments or very long single lines) will fail with exit code 130 or similar errors. Follow these rules:
+Terminal commands with excessive length (either many arguments or very long
+single lines) will fail with exit code 130 or similar errors. Follow these
+rules:
 
 **Maximum Safe Limits:**
 
@@ -81,7 +95,8 @@ chmod +x /Users/jdfalk/repos/temp_crap/my_script.sh
 
 ## Repository Context
 
-This repository provides a composite GitHub Action that determines release strategies based on conventional commits and repository configuration.
+This repository provides a composite GitHub Action that determines release
+strategies based on conventional commits and repository configuration.
 
 **Key Files:**
 
