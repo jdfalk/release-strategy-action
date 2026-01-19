@@ -60,6 +60,7 @@ jobs:
 
           # Files to never overwrite (local overrides)
           EXCLUDE_PATTERNS=(
+            ".github/instructions/copilot-instructions.md"
             "*.local.instructions.md"
             ".github/workflows/"
             "README.md"
