@@ -1,5 +1,5 @@
 # file: .github/workflows/sync-from-template.yml
-# version: 1.0.1
+# version: 1.0.2
 # guid: 8f9e0a1b-2c3d-4e5f-6a7b-8c9d0e1f2a3b
 name: Sync from Template
 
@@ -24,13 +24,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 1
 
       - name: Checkout template repo
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           repository: jdfalk/jft-github-actions
           path: template
