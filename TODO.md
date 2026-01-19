@@ -1,6 +1,7 @@
 <!-- file: TODO.md -->
 <!-- version: 1.0.3 -->
 <!-- guid: 46eae8ba-99ef-4dcb-89a2-50efa4234f1f -->
+<!-- last-edited: 2026-01-19 -->
 
 # TODO - release-strategy-action
 

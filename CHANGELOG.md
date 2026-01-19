@@ -1,6 +1,7 @@
 <!-- file: CHANGELOG.md -->
 <!-- version: 1.0.1 -->
 <!-- guid: 59d07b4a-7fb4-45eb-8c9f-47a4b0557517 -->
+<!-- last-edited: 2026-01-19 -->
 
 # Changelog
 
