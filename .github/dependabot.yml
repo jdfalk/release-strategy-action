@@ -1,20 +1,11 @@
 # file: .github/dependabot.yml
 # version: 1.0.0
-# guid: 8a7b6c5d-4e3f-2a1b-0c9d-8e7f6a5b4c3d
+# guid: d1e2f3a4-b5c6-7d8e-9f0a-1b2c3d4e5f6a
 
 version: 2
 updates:
-  - package-ecosystem: github-actions
-    directory: /
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: weekly
-      day: wednesday
-      time: '10:00'
-      timezone: America/New_York
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: ci
-      include: scope
-    labels:
-      - dependencies
-      - github-actions
+      interval: "weekly"
+    open-pull-requests-limit: 10

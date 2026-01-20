@@ -87,7 +87,7 @@ For the remaining non-ASCII characters, use the actual Unicode character (e.g. `
 const units = 'μs';
 
 // Use escapes for non-printable characters.
-const output = '\ufeff' + content; // byte order mark
+const output = '\ufeff' + content;  // byte order mark
 ```
 
 ### Source File Structure
@@ -120,17 +120,17 @@ A file may have a top-level `@fileoverview` JSDoc. If present, it may provide a 
 
 There are four variants of import statements in ES6 and TypeScript:
 
-| Type        | Import Style                     | Usage                                                   |
-| ----------- | -------------------------------- | ------------------------------------------------------- |
-| module      | `import * as foo from '...';`    | TypeScript imports                                      |
-| named       | `import {SomeThing} from '...';` | TypeScript imports                                      |
-| default     | `import SomeThing from '...';`   | Only for other external code that requires them         |
-| side-effect | `import '...';`                  | Only to import libraries for their side-effects on load |
+| Type | Import Style | Usage |
+|------|-------------|--------|
+| module | `import * as foo from '...';` | TypeScript imports |
+| named | `import {SomeThing} from '...';` | TypeScript imports |
+| default | `import SomeThing from '...';` | Only for other external code that requires them |
+| side-effect | `import '...';` | Only to import libraries for their side-effects on load |
 
 ```typescript
 // Good: choose between two options as appropriate (see below).
 import * as ng from '@angular/core';
-import { Foo } from './foo';
+import {Foo} from './foo';
 
 // Only when needed: default imports.
 import Button from 'Button';
@@ -156,22 +156,17 @@ Prefer namespace imports when using many different symbols from large APIs. A na
 
 ```typescript
 // Bad: overlong import statement of needlessly namespaced names.
-import {
-  Item as TableviewItem,
-  Header as TableviewHeader,
-  Row as TableviewRow,
-  Model as TableviewModel,
-  Renderer as TableviewRenderer,
-} from './tableview';
+import {Item as TableviewItem, Header as TableviewHeader, Row as TableviewRow,
+  Model as TableviewModel, Renderer as TableviewRenderer} from './tableview';
 
-let item: TableviewItem | undefined;
+let item: TableviewItem|undefined;
 ```
 
 ```typescript
 // Better: use the module for namespacing.
 import * as tableview from './tableview';
 
-let item: tableview.Item | undefined;
+let item: tableview.Item|undefined;
 ```
 
 ##### Renaming Imports
@@ -230,9 +225,7 @@ Do not create container classes with static methods or properties for the sake o
 ```typescript
 export class Container {
   static FOO = 1;
-  static bar() {
-    return 1;
-  }
+  static bar() { return 1; }
 }
 ```
 
@@ -240,9 +233,7 @@ Instead, export individual constants and functions:
 
 ```typescript
 export const FOO = 1;
-export function bar() {
-  return 1;
-}
+export function bar() { return 1; }
 ```
 
 ### Language Features
@@ -254,8 +245,8 @@ export function bar() {
 Always use `const` or `let` to declare variables. Use `const` by default, unless a variable needs to be reassigned. Never use `var`.
 
 ```typescript
-const foo = otherValue; // Use if "foo" never changes.
-let bar = someValue; // Use if "bar" is ever assigned into later on.
+const foo = otherValue;  // Use if "foo" never changes.
+let bar = someValue;     // Use if "bar" is ever assigned into later on.
 ```
 
 `const` and `let` are block scoped, like variables in most other languages. `var` in JavaScript is function scoped, which can cause difficult to understand bugs. Don't use it.
@@ -288,7 +279,7 @@ const c = [];
 c.length = 2;
 
 // [0, 0, 0, 0, 0]
-Array.from<number>({ length: 5 }).fill(0);
+Array.from<number>({length: 5}).fill(0);
 ```
 
 ##### Do not define properties on arrays
@@ -316,7 +307,7 @@ Array literals may be used on the left-hand side of an assignment to perform des
 
 ```typescript
 const [a, b, c, ...rest] = generateResults();
-let [, b, , d] = someArray;
+let [, b,, d] = someArray;
 ```
 
 Destructuring may also be used for function parameters. Always specify `[]` as the default value if a destructured array parameter is optional, and provide default values on the left hand side:
@@ -350,12 +341,10 @@ for (const x in someObj) {
   if (!someObj.hasOwnProperty(x)) continue;
   // now x was definitely defined on someObj
 }
-for (const x of Object.keys(someObj)) {
-  // note: for _of_!
+for (const x of Object.keys(someObj)) { // note: for _of_!
   // now x was definitely defined on someObj
 }
-for (const [key, value] of Object.entries(someObj)) {
-  // note: for _of_!
+for (const [key, value] of Object.entries(someObj)) { // note: for _of_!
   // now key was definitely defined on someObj
 }
 ```
@@ -393,7 +382,7 @@ interface Options {
   str?: string;
 }
 
-function destructured({ num, str = 'default' }: Options = {}) {}
+function destructured({num, str = 'default'}: Options = {}) {}
 ```
 
 #### Classes
@@ -403,7 +392,8 @@ function destructured({ num, str = 'default' }: Options = {}) {}
 Class declarations must not be terminated with semicolons:
 
 ```typescript
-class Foo {}
+class Foo {
+}
 ```
 
 In contrast, statements that contain class expressions must be terminated with a semicolon:
@@ -423,7 +413,7 @@ Class method declarations must not use a semicolon to separate individual method
 ```typescript
 class Foo {
   doThing() {
-    console.log('A');
+    console.log("A");
   }
 }
 ```
@@ -543,9 +533,9 @@ Restricting visibility of properties, methods, and entire types helps with keepi
 
 ```typescript
 class Foo {
-  bar = new Bar(); // GOOD: public modifier not needed
+  bar = new Bar();  // GOOD: public modifier not needed
 
-  constructor(public baz: Baz) {} // public modifier allowed
+  constructor(public baz: Baz) {}  // public modifier allowed
 }
 ```
 
@@ -582,9 +572,7 @@ Functions nested within other methods or functions may use function declarations
 Do not use function expressions. Use arrow functions instead.
 
 ```typescript
-bar(() => {
-  this.doSomething();
-});
+bar(() => { this.doSomething(); })
 ```
 
 Exception: Function expressions may be used only if code has to dynamically rebind `this` (but this is discouraged), or for generator functions (which do not have an arrow syntax).
@@ -613,9 +601,7 @@ Function expressions and function declarations must not use `this` unless they s
 
 ```typescript
 // Good: explicitly reference the object from an arrow function.
-document.body.onclick = () => {
-  document.body.textContent = 'hello';
-};
+document.body.onclick = () => { document.body.textContent = 'hello'; };
 ```
 
 ##### Prefer passing arrow functions as callbacks
@@ -626,7 +612,7 @@ Avoid passing a named callback to a higher-order function, unless you are sure o
 
 ```typescript
 // GOOD: Arguments are explicitly passed to the callback
-const numbers = ['11', '5', '3'].map(n => parseInt(n));
+const numbers = ['11', '5', '3'].map((n) => parseInt(n));
 // > [11, 5, 3]
 ```
 
@@ -655,22 +641,22 @@ Exception: Variables that are in scope for 10 lines or fewer, including argument
 
 ```typescript
 // Good identifiers:
-errorCount; // No abbreviation.
-dnsConnectionIndex; // Most people know what "DNS" stands for.
-referrerUrl; // Ditto for "URL".
-customerId; // "Id" is both ubiquitous and unlikely to be misunderstood.
+errorCount          // No abbreviation.
+dnsConnectionIndex  // Most people know what "DNS" stands for.
+referrerUrl         // Ditto for "URL".
+customerId          // "Id" is both ubiquitous and unlikely to be misunderstood.
 ```
 
 ```typescript
 // Disallowed identifiers:
-n; // Meaningless.
-nErr; // Ambiguous abbreviation.
-nCompConns; // Ambiguous abbreviation.
-wgcConnections; // Only your group knows what this stands for.
-pcReader; // Lots of things can be abbreviated "pc".
-cstmrId; // Deletes internal letters.
-kSecondsPerDay; // Do not use Hungarian notation.
-customerID; // Incorrect camelcase of "ID".
+n                   // Meaningless.
+nErr                // Ambiguous abbreviation.
+nCompConns          // Ambiguous abbreviation.
+wgcConnections      // Only your group knows what this stands for.
+pcReader            // Lots of things can be abbreviated "pc".
+cstmrId             // Deletes internal letters.
+kSecondsPerDay      // Do not use Hungarian notation.
+customerID          // Incorrect camelcase of "ID".
 ```
 
 ##### Camel Case
@@ -685,11 +671,11 @@ Identifiers should not generally use `$`, except when required by naming convent
 
 Most identifier names should follow the casing in the table below, based on the identifier's type.
 
-| Style          | Type                                                                                                                   |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Style | Type |
+|-------|------|
 | UpperCamelCase | class / interface / type / enum / decorator / type parameters / component functions in TSX / JSXElement type parameter |
-| lowerCamelCase | variable / parameter / function / method / property / module alias                                                     |
-| CONSTANT_CASE  | global constant values, including enum values                                                                          |
+| lowerCamelCase | variable / parameter / function / method / property / module alias |
+| CONSTANT_CASE | global constant values, including enum values |
 
 ##### Type Parameters
 
@@ -699,7 +685,7 @@ Type parameters, like in `Array<T>`, may use a single upper case character (`T`)
 
 Test method names in xUnit-style test frameworks may be structured with `_` separators, e.g. `testX_whenY_doesZ()`.
 
-##### \_ prefix/suffix
+##### _ prefix/suffix
 
 Identifiers must not use `_` as a prefix or suffix.
 
@@ -719,8 +705,8 @@ Immutable: `CONSTANT_CASE` indicates that a value is intended to not be changed,
 
 ```typescript
 const UNIT_SUFFIXES = {
-  milliseconds: 'ms',
-  seconds: 's',
+  'milliseconds': 'ms',
+  'seconds': 's',
 };
 // Even though per the rules of JavaScript UNIT_SUFFIXES is
 // mutable, the uppercase shows users to not modify it.
@@ -737,7 +723,7 @@ Global: Only symbols declared on the module level, static fields of module level
 Code may rely on type inference as implemented by the TypeScript compiler for all type expressions (variables, fields, return types, etc).
 
 ```typescript
-const x = 15; // Type inferred.
+const x = 15;  // Type inferred.
 ```
 
 Leave out type annotations for trivially inferred types: variables or parameters initialized to a `string`, `number`, `boolean`, `RegExp` literal or `new` expression.
@@ -805,7 +791,7 @@ When providing a structural-based implementation, explicitly include the type at
 const foo: Foo = {
   a: 123,
   b: 'abc',
-};
+}
 ```
 
 Use interfaces to define structural types, not classes.
@@ -836,9 +822,9 @@ let a: string[];
 let b: readonly string[];
 let c: ns.MyObj[];
 let d: string[][];
-let e: Array<{ n: number; s: string }>;
-let f: Array<string | number>;
-let g: ReadonlyArray<string | number>;
+let e: Array<{n: number, s: string}>;
+let f: Array<string|number>;
+let g: ReadonlyArray<string|number>;
 ```
 
 #### any Type
@@ -979,9 +965,9 @@ JSDoc type annotations are redundant in TypeScript source code. Do not declare t
 TypeScript code must not instantiate the wrapper classes for the primitive types `String`, `Boolean`, and `Number`. Wrapper classes have surprising behavior, such as `new Boolean(false)` evaluating to `true`.
 
 ```typescript
-const s = new String('hello'); // BAD
-const b = new Boolean(false); // BAD
-const n = new Number(5); // BAD
+const s = new String('hello');  // BAD
+const b = new Boolean(false);   // BAD
+const n = new Number(5);        // BAD
 ```
 
 The wrappers may be called as functions for coercing (which is preferred over using `+` or concatenating the empty string) or creating symbols.
@@ -1002,7 +988,7 @@ Debugger statements must not be included in production code.
 
 ```typescript
 function debugMe() {
-  debugger; // BAD
+  debugger;  // BAD
 }
 ```
 

@@ -62,7 +62,6 @@ When performing git operations (commit, push, pull, file operations), use the MC
 - `mcp_github_push_files` - Push multiple files in a single commit
 
 **Benefits:**
-
 - Direct GitHub integration without shell commands
 - Consistent error handling and authentication
 - Proper logging and audit trail
@@ -81,19 +80,19 @@ When performing ANY operation (git, build, test, etc.), follow this priority:
 
 ### Common Operations and Their Tasks
 
-| Operation                  | Task Name                  | Manual Fallback           |
-| -------------------------- | -------------------------- | ------------------------- |
-| Git add all files          | `Git Add All`              | `git add .`               |
-| Git add specific files     | `Git Add Selective`        | `git add <pattern>`       |
-| Git commit                 | `Git Commit`               | `git commit -m "message"` |
-| Git push                   | `Git Push`                 | `git push`                |
-| Git status                 | `Git Status`               | `git status`              |
-| Build Go project           | `Go Build`                 | `go build`                |
-| Run Go tests               | `Go Test`                  | `go test ./...`           |
-| Protocol buffer generation | `Buf Generate with Output` | `buf generate`            |
-| Python tests               | `Python Test`              | `python -m pytest`        |
-| Rust build                 | `Rust Build`               | `cargo build`             |
-| Rust tests                 | `Rust Test`                | `cargo test`              |
+| Operation | Task Name | Manual Fallback |
+|-----------|-----------|-----------------|
+| Git add all files | `Git Add All` | `git add .` |
+| Git add specific files | `Git Add Selective` | `git add <pattern>` |
+| Git commit | `Git Commit` | `git commit -m "message"` |
+| Git push | `Git Push` | `git push` |
+| Git status | `Git Status` | `git status` |
+| Build Go project | `Go Build` | `go build` |
+| Run Go tests | `Go Test` | `go test ./...` |
+| Protocol buffer generation | `Buf Generate with Output` | `buf generate` |
+| Python tests | `Python Test` | `python -m pytest` |
+| Rust build | `Rust Build` | `cargo build` |
+| Rust tests | `Rust Test` | `cargo test` |
 
 ### Task Usage Examples
 
@@ -182,7 +181,7 @@ containing:
   <!-- file: path/to/file.md -->
   <!-- version: 1.1.0 -->
   <!-- guid: 123e4567-e89b-12d3-a456-426614174000 -->
-  <!-- last-edited: 2026-01-19 -->
+<!-- last-edited: 2026-01-19 -->
   ```
 
 - **Python:**
@@ -220,7 +219,6 @@ containing:
   ```
 
   (Header must come after the shebang line)
-
 - **CSS:**
 
   ```css
@@ -247,7 +245,6 @@ containing:
   ```
 
   (Header must come after the shebang line)
-
 - **JSON:**
 
   ```jsonc

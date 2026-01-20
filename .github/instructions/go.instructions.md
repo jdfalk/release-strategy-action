@@ -111,9 +111,9 @@ The CI/CD system automatically detects appropriate Go versions based on branch c
 ```yaml
 # Automatically resolved from workflow-versions.yml
 go-versions:
-  main: ['1.23', '1.24', '1.25']
-  stable-1-go-1.24: ['1.24']
-  stable-1-go-1.23: ['1.23']
+  main: ["1.23", "1.24", "1.25"]
+  stable-1-go-1.24: ["1.24"]
+  stable-1-go-1.23: ["1.23"]
 ```
 
 **Workflow Behavior**:
@@ -143,6 +143,7 @@ go-versions:
    ```
 
 3. **Use New Features**:
+
    - Replace manual benchmark loops with `testing.B.Loop()`
    - Leverage improved error wrapping
    - Benefit from performance improvements automatically
@@ -163,6 +164,7 @@ go-versions:
    ```
 
 3. **Use New Features**:
+
    - Use `os.Root()` for filesystem isolation in sandboxed operations
    - Replace traditional `for i := 0; i < n; i++` with `for i := range n {}`
    - Benefit from generic optimizations automatically
@@ -507,7 +509,7 @@ func processUser(id string) error {
 **Error Checking:**
 
 - Check errors immediately after operations
-- Don't ignore errors (use \_ only when truly appropriate)
+- Don't ignore errors (use _ only when truly appropriate)
 
 ```go
 // Good

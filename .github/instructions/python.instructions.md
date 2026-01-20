@@ -153,7 +153,7 @@ def viking_cafe_order(spam: str, beans: str, eggs: str | None = None) -> str:
     return spam + spam + spam
 ```
 
-Other common forms of suppressing this warning include using '_' as the identifier for the unused argument or prefixing the argument name with 'unused_', or assigning them to '\_'. These forms are allowed but no longer encouraged. These break callers that pass arguments by name and do not enforce that the arguments are actually unused.
+Other common forms of suppressing this warning include using '_' as the identifier for the unused argument or prefixing the argument name with 'unused_', or assigning them to '_'. These forms are allowed but no longer encouraged. These break callers that pass arguments by name and do not enforce that the arguments are actually unused.
 
 Run `pylint` over your code using this [pylintrc](https://google.github.io/styleguide/pylintrc).
 
@@ -178,11 +178,11 @@ Use `import` statements for packages and modules only, not for individual types,
 • Use `import x` for importing packages and modules.
 • Use `from x import y` where `x` is the package prefix and `y` is the module name with no prefix.
 • Use `from x import y as z` in any of the following circumstances:
-◦ Two modules named `y` are to be imported.
-◦ `y` conflicts with a top-level name defined in the current module.
-◦ `y` conflicts with a common parameter name that is part of the public API (e.g., `features`).
-◦ `y` is an inconveniently long name.
-◦ `y` is too generic in the context of your code (e.g., `from storage.file_system import options as fs_options`).
+  ◦ Two modules named `y` are to be imported.
+  ◦ `y` conflicts with a top-level name defined in the current module.
+  ◦ `y` conflicts with a common parameter name that is part of the public API (e.g., `features`).
+  ◦ `y` is an inconveniently long name.
+  ◦ `y` is too generic in the context of your code (e.g., `from storage.file_system import options as fs_options`).
 • Use `import y as z` only when `z` is a standard abbreviation (e.g., `import numpy as np`).
 
 For example the module `sound.effects.echo` may be imported as follows:
@@ -200,9 +200,9 @@ Do not use relative names in imports. Even if the module is in the same package,
 Exemptions from this rule:
 
 • Symbols from the following modules are used to support static analysis and type checking:
-◦ typing module
-◦ collections.abc module
-◦ [typing_extensions module](https://github.com/python/typing_extensions/blob/main/README.md)
+  ◦ typing module
+  ◦ collections.abc module
+  ◦ [typing_extensions module](https://github.com/python/typing_extensions/blob/main/README.md)
 • Redirects from the [six.moves module](https://six.readthedocs.io/#module-six.moves).
 
 #### 2.3 Packages
@@ -328,8 +328,8 @@ No:
 
 • Libraries or packages may define their own exceptions. When doing so they must inherit from an existing exception class. Exception names should end in `Error` and should not introduce repetition (`foo.FooError`).
 • Never use catch-all `except:` statements, or catch `Exception` or `StandardError`, unless you are
-◦ re-raising the exception, or
-◦ creating an isolation point in the program where exceptions are not propagated but are recorded and suppressed instead, such as protecting a thread from crashing by guarding its outermost block.
+  ◦ re-raising the exception, or
+  ◦ creating an isolation point in the program where exceptions are not propagated but are recorded and suppressed instead, such as protecting a thread from crashing by guarding its outermost block.
 
 Python is very tolerant in this regard and `except:` will really catch everything including misspelled names, sys.exit() calls, Ctrl+C interrupts, unittest failures and all kinds of other exceptions that you simply don't want to catch.
 
@@ -377,7 +377,7 @@ Nested functions and classes cannot be directly tested. Nesting can make the out
 
 Nested local functions or classes are fine when used to close over a local variable. Inner classes are fine.
 
-They are fine with some caveats. Avoid nested functions or classes except when closing over a local value other than `self` or `cls`. Do not nest a function just to hide it from users of a module. Instead, prefix its name with an \_ at the module level so that it can still be accessed by tests.
+They are fine with some caveats. Avoid nested functions or classes except when closing over a local value other than `self` or `cls`. Do not nest a function just to hide it from users of a module. Instead, prefix its name with an _ at the module level so that it can still be accessed by tests.
 
 #### 2.7 Comprehensions & Generator Expressions
 
@@ -884,7 +884,7 @@ Explicit exceptions to the 80 character limit:
 • Long import statements.
 • URLs, pathnames, or long flags in comments.
 • Long string module-level constants not containing whitespace that would be inconvenient to split across lines such as URLs or pathnames.
-◦ Pylint disable comments. (e.g.: `# pylint: disable=invalid-name`)
+  ◦ Pylint disable comments. (e.g.: `# pylint: disable=invalid-name`)
 
 Do not use a backslash for [explicit line continuation](https://docs.python.org/3/reference/lexical_analysis.html#explicit-line-joining).
 
@@ -1722,11 +1722,11 @@ Always use a `.py` filename extension. Never use dashes.
 ##### 3.16.1 Names to Avoid
 
 • single character names, except for specifically allowed cases:
-◦ counters or iterators (e.g. `i`, `j`, `k`, `v`, et al.)
-◦ `e` as an exception identifier in `try/except` statements.
-◦ `f` as a file handle in `with` statements
-◦ private type variables with no constraints (e.g. `_T = TypeVar("_T")`, `_P = ParamSpec("_P")`)
-◦ names that match established notation in a reference paper or algorithm (see Mathematical Notation)
+  ◦ counters or iterators (e.g. `i`, `j`, `k`, `v`, et al.)
+  ◦ `e` as an exception identifier in `try/except` statements.
+  ◦ `f` as a file handle in `with` statements
+  ◦ private type variables with no constraints (e.g. `_T = TypeVar("_T")`, `_P = ParamSpec("_P")`)
+  ◦ names that match established notation in a reference paper or algorithm (see Mathematical Notation)
 
 Please be mindful not to abuse single-character naming. Generally speaking, descriptiveness should be proportional to the name's scope of visibility. For example, `i` might be a fine name for 5-line code block but within multiple nested scopes, it is likely too vague.
 
@@ -1741,8 +1741,8 @@ Please be mindful not to abuse single-character naming. Generally speaking, desc
 • Prepending a single underscore (`_`) has some support for protecting module variables and functions (linters will flag protected member access). Note that it is okay for unit tests to access protected constants from the modules under test.
 • Prepending a double underscore (`__` aka "dunder") to an instance variable or method effectively makes the variable or method private to its class (using name mangling); we discourage its use as it impacts readability and testability, and isn't really private. Prefer a single underscore.
 • Place related classes and top-level functions together in a module. Unlike Java, there is no need to limit yourself to one class per module.
-• Use CapWords for class names, but lower*with_under.py for module names. Although there are some old modules named CapWords.py, this is now discouraged because it's confusing when the module happens to be named after a class. ("wait – did I write `import StringIO` or `from StringIO import StringIO`?")
-• New unit test files follow PEP 8 compliant lower_with_under method names, for example, `test*<method*under_test>*<state>`. For consistency(*) with legacy modules that follow CapWords function names, underscores may appear in method names starting with `test`to separate logical components of the name. One possible pattern is`test<MethodUnderTest>\_<state>`.
+• Use CapWords for class names, but lower_with_under.py for module names. Although there are some old modules named CapWords.py, this is now discouraged because it's confusing when the module happens to be named after a class. ("wait – did I write `import StringIO` or `from StringIO import StringIO`?")
+• New unit test files follow PEP 8 compliant lower_with_under method names, for example, `test_<method_under_test>_<state>`. For consistency(*) with legacy modules that follow CapWords function names, underscores may appear in method names starting with `test` to separate logical components of the name. One possible pattern is `test<MethodUnderTest>_<state>`.
 
 ##### 3.16.3 File Naming
 
@@ -1750,19 +1750,19 @@ Python filenames must have a `.py` extension and must not contain dashes (`-`). 
 
 ##### 3.16.4 Guidelines derived from Guido's Recommendations
 
-| Type                       | Public             | Internal                         |
-| -------------------------- | ------------------ | -------------------------------- |
-| Packages                   | lower_with_under   |                                  |
-| Modules                    | lower_with_under   | \_lower_with_under               |
-| Classes                    | CapWords           | \_CapWords                       |
-| Exceptions                 | CapWords           |                                  |
-| Functions                  | lower_with_under() | \_lower_with_under()             |
-| Global/Class Constants     | CAPS_WITH_UNDER    | \_CAPS_WITH_UNDER                |
-| Global/Class Variables     | lower_with_under   | \_lower_with_under               |
-| Instance Variables         | lower_with_under   | \_lower_with_under (protected)   |
-| Method Names               | lower_with_under() | \_lower_with_under() (protected) |
-| Function/Method Parameters | lower_with_under   |                                  |
-| Local Variables            | lower_with_under   |                                  |
+| Type | Public | Internal |
+|------|--------|----------|
+| Packages | lower_with_under |   |
+| Modules | lower_with_under | _lower_with_under |
+| Classes | CapWords | _CapWords |
+| Exceptions | CapWords |   |
+| Functions | lower_with_under() | _lower_with_under() |
+| Global/Class Constants | CAPS_WITH_UNDER | _CAPS_WITH_UNDER |
+| Global/Class Variables | lower_with_under | _lower_with_under |
+| Instance Variables | lower_with_under | _lower_with_under (protected) |
+| Method Names | lower_with_under() | _lower_with_under() (protected) |
+| Function/Method Parameters | lower_with_under |   |
+| Local Variables | lower_with_under |   |
 
 ##### 3.16.5 Mathematical Notation
 
@@ -1836,11 +1836,11 @@ class BaseClass:
 • Similarly, don't feel compelled to annotate the return value of `__init__` (where `None` is the only valid option).
 • If any other variable or a returned type should not be expressed, use `Any`.
 • You are not required to annotate all the functions in a module.
-◦ At least annotate your public APIs.
-◦ Use judgment to get to a good balance between safety and clarity on the one hand, and flexibility on the other.
-◦ Annotate code that is prone to type-related errors (previous bugs or complexity).
-◦ Annotate code that is hard to understand.
-◦ Annotate code as it becomes stable from a types perspective. In many cases, you can annotate all the functions in mature code without losing too much flexibility.
+  ◦ At least annotate your public APIs.
+  ◦ Use judgment to get to a good balance between safety and clarity on the one hand, and flexibility on the other.
+  ◦ Annotate code that is prone to type-related errors (previous bugs or complexity).
+  ◦ Annotate code that is hard to understand.
+  ◦ Annotate code as it becomes stable from a types perspective. In many cases, you can annotate all the functions in mature code without losing too much flexibility.
 
 ##### 3.19.2 Line Breaking
 
@@ -1994,7 +1994,7 @@ def implicit_optional(a: str = None) -> str:
 
 ##### 3.19.6 Type Aliases
 
-You can declare aliases of complex types. The name of an alias should be CapWorded. If the alias is used only in this module, it should be \_Private.
+You can declare aliases of complex types. The name of an alias should be CapWorded. If the alias is used only in this module, it should be _Private.
 
 Note that the `: TypeAlias` annotation is only supported in versions 3.10+.
 
@@ -2227,4 +2227,3 @@ However, there are limits to consistency. It applies more heavily locally and on
 
 ````
 ```
-````

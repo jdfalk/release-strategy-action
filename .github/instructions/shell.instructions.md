@@ -65,7 +65,6 @@ Shell:
 **Priority Order (MUST follow this order):**
 
 1. **FIRST**: Use built-in shell constructs
-
    ```bash
    # Use echo
    echo "content" > file.txt
@@ -75,7 +74,6 @@ Shell:
    ```
 
 2. **SECOND**: Use standard Unix tools
-
    ```bash
    # Use tee
    echo "content" | tee file.txt
@@ -85,14 +83,12 @@ Shell:
    ```
 
 3. **THIRD**: Use scripting languages (Python, etc.)
-
    ```bash
    # Python for complex operations
    python3 -c "open('file.txt', 'w').write('content')"
    ```
 
 4. **FOURTH**: Use MCP tools or specialized utilities
-
    ```bash
    # Use MCP GitHub tools for file creation
    mcp_github_create_or_update_file
@@ -109,7 +105,6 @@ Shell:
 **If you find yourself using HEREDOC, you have failed to exhaust all other options first.**
 
 **Delimiter Rules (if you MUST use HEREDOC as absolute last resort):**
-
 - Ending delimiter MUST match opening delimiter EXACTLY
 - Must be on its own line with no indentation (unless using `<<-`)
 - Example: `<< 'EOF'` requires ending with `EOF` on its own line, nothing else

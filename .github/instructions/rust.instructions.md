@@ -76,7 +76,7 @@ use crate::models::User;
 - Document all public items (functions, methods, structs, enums, traits)
 - Include examples in documentation where helpful
 
-````rust
+```rust
 /// Represents a user in the system.
 ///
 /// # Examples
@@ -89,7 +89,7 @@ pub struct User {
     username: String,
     password_hash: String,
 }
-````
+```
 
 ## Error Handling
 

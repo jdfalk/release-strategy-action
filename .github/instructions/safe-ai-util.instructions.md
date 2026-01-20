@@ -514,14 +514,14 @@ The Rust utility provides superior error messages and handling:
 
 ## 📚 Command Reference Summary
 
-| Category          | Command                         | Purpose                                           |
-| ----------------- | ------------------------------- | ------------------------------------------------- |
-| Git               | `safe-ai-util git <subcommand>` | Complete git operations (18+ subcommands)         |
-| Text Processing   | `safe-ai-util sed <options>`    | Stream editing with regex support                 |
-| Text Processing   | `safe-ai-util awk '<program>'`  | Pattern processing and field extraction           |
-| Editing           | `safe-ai-util editor <file>`    | Superior terminal editor with syntax highlighting |
-| Protocol Buffers  | `safe-ai-util buf <subcommand>` | Comprehensive protobuf tooling                    |
-| Command Execution | `safe-ai-util exec <command>`   | Execute arbitrary commands with enhanced logging  |
-| Configuration     | `copilot-util-args` file        | Automatic configuration loading for all commands  |
+| Category        | Command                                | Purpose                                           |
+| --------------- | -------------------------------------- | ------------------------------------------------- |
+| Git             | `safe-ai-util git <subcommand>` | Complete git operations (18+ subcommands)         |
+| Text Processing | `safe-ai-util sed <options>`    | Stream editing with regex support                 |
+| Text Processing | `safe-ai-util awk '<program>'`  | Pattern processing and field extraction           |
+| Editing         | `safe-ai-util editor <file>`    | Superior terminal editor with syntax highlighting |
+| Protocol Buffers| `safe-ai-util buf <subcommand>` | Comprehensive protobuf tooling                   |
+| Command Execution| `safe-ai-util exec <command>`  | Execute arbitrary commands with enhanced logging  |
+| Configuration   | `copilot-util-args` file               | Automatic configuration loading for all commands  |
 
 **Remember: Always use VS Code tasks first, then the Rust utility, and manual commands only as a last resort.**
