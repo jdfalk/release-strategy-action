@@ -1,110 +1,39 @@
 # file: .github/workflows/release.yml
-# version: 1.0.0
+# version: 2.0.0
 # guid: d6e7f8a9-b0c1-2345-d901-456789012345
 
 name: Release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*.*.*'
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version to release (e.g., 1.0.0)'
-        required: true
-        type: string
+      release-type:
+        description: 'Release type (auto, major, minor, patch)'
+        required: false
+        type: choice
+        options:
+          - auto
+          - major
+          - minor
+          - patch
+        default: 'auto'
 
 permissions:
   contents: write
+  packages: write
+  attestations: write
+  id-token: write
 
 jobs:
   release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          fetch-depth: 0
-
-      - name: Determine version
-        id: version
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION="${{ github.event.inputs.version }}"
-            echo "version=v${{VERSION#v}}" >> $GITHUB_OUTPUT
-            echo "tag=v${{VERSION#v}}" >> $GITHUB_OUTPUT
-          else
-            VERSION="${{GITHUB_REF#refs/tags/}}"
-            echo "version=${{VERSION#v}}" >> $GITHUB_OUTPUT
-            echo "tag=${{VERSION}}" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Generate changelog
-        run: |
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-
-          if [ -z "$PREV_TAG" ]; then
-            CHANGES=$(git log --pretty=format:"- %s (%h)" --no-merges)
-          else
-            CHANGES=$(git log ${{PREV_TAG}}..HEAD --pretty=format:"- %s (%h)" --no-merges)
-          fi
-
-          echo "$CHANGES" > CHANGELOG.txt
-          echo "Changes since ${{PREV_TAG:-initial commit}}:" > RELEASE_NOTES.txt
-          echo "" >> RELEASE_NOTES.txt
-          cat CHANGELOG.txt >> RELEASE_NOTES.txt
-
-      - name: Create Release
-        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
-        with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          name: Release ${{ steps.version.outputs.tag }}
-          body_path: RELEASE_NOTES.txt
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  update-tags:
-    name: Update Major/Minor Tags
-    runs-on: ubuntu-latest
-    needs: release
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          fetch-depth: 0
-
-      - name: Determine version
-        id: version
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION="${{ github.event.inputs.version }}"
-            VERSION="${{VERSION#v}}"
-          else
-            VERSION="${{GITHUB_REF#refs/tags/v}}"
-          fi
-
-          MAJOR=$(echo $VERSION | cut -d. -f1)
-          MINOR=$(echo $VERSION | cut -d. -f2)
-
-          echo "major=v${{MAJOR}}" >> $GITHUB_OUTPUT
-          echo "minor=v${{MAJOR}}.${{MINOR}}" >> $GITHUB_OUTPUT
-          echo "full=v${{VERSION}}" >> $GITHUB_OUTPUT
-
-      - name: Update major version tag
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Point major tag to the full version tag, not to HEAD
-          git tag -fa ${{ steps.version.outputs.major }} ${{ steps.version.outputs.full }} -m "Update ${{ steps.version.outputs.major }} to ${{ steps.version.outputs.full }}"
-          git push origin ${{ steps.version.outputs.major }} --force
-
-      - name: Update minor version tag
-        run: |
-          # Point minor tag to the full version tag, not to HEAD
-          git tag -fa ${{ steps.version.outputs.minor }} ${{ steps.version.outputs.full }} -m "Update ${{ steps.version.outputs.minor }} to ${{ steps.version.outputs.full }}"
-          git push origin ${{ steps.version.outputs.minor }} --force
+    name: Automated Release
+    uses: jdfalk/ghcommon/.github/workflows/reusable-release.yml@main
+    with:
+      release-type: ${{ inputs.release-type || 'auto' }}
+      build-target: 'all'
+    secrets: inherit
