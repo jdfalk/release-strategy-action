@@ -1,5 +1,5 @@
 # file: .github/workflows/release.yml
-# version: 2.0.0
+# version: 2.0.1
 # guid: d6e7f8a9-b0c1-2345-d901-456789012345
 
 name: Release
@@ -32,7 +32,7 @@ permissions:
 jobs:
   release:
     name: Automated Release
-    uses: jdfalk/ghcommon/.github/workflows/reusable-release.yml@main
+    uses: jdfalk/ghcommon/.github/workflows/reusable-release.yml@41a2edb6639d44ac9f328ea263299a55d78d08b3
     with:
       release-type: ${{ inputs.release-type || 'auto' }}
       build-target: 'all'
