@@ -1,11 +1,29 @@
-# file: .github/dependabot.yml
+# Dependabot Configuration
 # version: 1.0.0
-# guid: d1e2f3a4-b5c6-7d8e-9f0a-1b2c3d4e5f6a
+# guid: a1b2c3d4-e5f6-7890-abcd-ef1234567890
 
 version: 2
-updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+
+multi-ecosystem-groups:
+  dependencies:
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
+      interval: weekly
+      day: tuesday
+      time: '10:00'
+      timezone: America/New_York
+    labels:
+      - dependencies
+      - dependabot
+    commit-message:
+      prefix: deps
+      include: scope
+
+updates:
+  # Github Actions
+  - package-ecosystem: github-actions
+    directory: /
+    patterns: ['*']
+    multi-ecosystem-group: dependencies
+    labels:
+      - github-actions
+      - ci-cd
