@@ -32,7 +32,7 @@ permissions:
 jobs:
   release:
     name: Automated Release
-    uses: jdfalk/ghcommon/.github/workflows/reusable-release.yml@41a2edb6639d44ac9f328ea263299a55d78d08b3
+    uses: jdfalk/ghcommon/.github/workflows/reusable-release.yml@6ed97545daef53051405663133e18fde036645e1
     with:
       release-type: ${{ inputs.release-type || 'auto' }}
       build-target: 'all'
