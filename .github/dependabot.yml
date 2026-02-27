@@ -9,7 +9,7 @@ multi-ecosystem-groups:
     schedule:
       interval: weekly
       day: tuesday
-      time: '10:00'
+      time: "10:00"
       timezone: America/New_York
     labels:
       - dependencies
@@ -22,8 +22,9 @@ updates:
   # Github Actions
   - package-ecosystem: github-actions
     directory: /
-    patterns: ['*']
+    patterns: ["*"]
     multi-ecosystem-group: dependencies
     labels:
       - github-actions
       - ci-cd
+
