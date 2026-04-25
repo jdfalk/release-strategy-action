@@ -1,0 +1,8 @@
+# file: .github/repository-config.yml
+# Seeded by bootstrap-repo skill on 2026-04-25
+
+repository:
+  name: release-strategy-action
+  type: action
+  primary_language: auto
+  description: ''
