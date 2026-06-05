@@ -178,7 +178,7 @@ release-strategy-action/
 1. **Strategy Command** (default):
 
    ```yaml
-   - uses: jdfalk/release-strategy-action@v2
+   - uses: falkcorp/gha-release-strategy@v2
      with:
        branch-name: main
    # Should output: strategy=stable, is-draft=true
@@ -187,7 +187,7 @@ release-strategy-action/
 2. **Changelog Command**:
 
    ```yaml
-   - uses: jdfalk/release-strategy-action@v2
+   - uses: falkcorp/gha-release-strategy@v2
      with:
        branch-name: develop
        command: 'changelog'
@@ -197,7 +197,7 @@ release-strategy-action/
 
 3. **Summary Command**:
    ```yaml
-   - uses: jdfalk/release-strategy-action@v2
+   - uses: falkcorp/gha-release-strategy@v2
      with:
        branch-name: main
        command: 'summary'

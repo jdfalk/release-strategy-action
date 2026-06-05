@@ -22,7 +22,7 @@ needed (composite action)
 ```yaml
 - name: Determine release strategy
   id: strategy
-  uses: jdfalk/release-strategy-action@v2
+  uses: falkcorp/gha-release-strategy@v2
   with:
     branch-name: ${{ github.ref_name }}
 
@@ -39,7 +39,7 @@ needed (composite action)
 ```yaml
 - name: Generate changelog
   id: changelog
-  uses: jdfalk/release-strategy-action@v2
+  uses: falkcorp/gha-release-strategy@v2
   with:
     branch-name: ${{ github.ref_name }}
     command: 'changelog'
@@ -57,7 +57,7 @@ needed (composite action)
 
 ```yaml
 - name: Build release summary
-  uses: jdfalk/release-strategy-action@v2
+  uses: falkcorp/gha-release-strategy@v2
   with:
     branch-name: ${{ github.ref_name }}
     command: 'summary'
@@ -223,13 +223,13 @@ jobs:
 
       - name: Determine strategy
         id: strategy
-        uses: jdfalk/release-strategy-action@v2
+        uses: falkcorp/gha-release-strategy@v2
         with:
           branch-name: ${{ github.ref_name }}
 
       - name: Generate changelog
         id: changelog
-        uses: jdfalk/release-strategy-action@v2
+        uses: falkcorp/gha-release-strategy@v2
         with:
           branch-name: ${{ github.ref_name }}
           command: 'changelog'
@@ -251,7 +251,7 @@ jobs:
 ```yaml
 - name: Build summary
   if: always()
-  uses: jdfalk/release-strategy-action@v2
+  uses: falkcorp/gha-release-strategy@v2
   with:
     branch-name: ${{ github.ref_name }}
     command: 'summary'
@@ -275,7 +275,7 @@ Existing workflows using v1.0.0 will continue to work without changes. The
 **v1.0.0 (still works):**
 
 ```yaml
-- uses: jdfalk/release-strategy-action@v1
+- uses: falkcorp/gha-release-strategy@v1
   id: strategy
   with:
     branch-name: ${{ github.ref_name }}
@@ -284,7 +284,7 @@ Existing workflows using v1.0.0 will continue to work without changes. The
 **v2.0.0 (updated, recommended):**
 
 ```yaml
-- uses: jdfalk/release-strategy-action@v2
+- uses: falkcorp/gha-release-strategy@v2
   id: strategy
   with:
     branch-name: ${{ github.ref_name }}
