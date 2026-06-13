@@ -1,13 +1,23 @@
 <!-- file: CLAUDE.md -->
-<!-- version: 3.0.0 -->
+<!-- version: 3.1.0 -->
 <!-- guid: 3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f -->
-<!-- last-edited: 2026-01-25 -->
+<!-- last-edited: 2026-06-13 -->
 
 # CLAUDE.md
 
-> **NOTE:** This file is a pointer. All Claude/AI agent and workflow
-> instructions are centralized in the `.github/instructions/` and
-> `.github/prompts/` directories.
+GHA composite action: release strategy and versioning decisions. Language:
+Shell/YAML.
+
+## Coding Standards
+
+Org-wide coding standards are in the `.standards/` git submodule (cloned from
+`https://github.com/falkcorp/.github`). Always clone with
+`git clone --recurse-submodules` so these are available.
+
+Key files:
+
+- **File headers (MANDATORY):** `.standards/instructions/file-headers.md`
+- **Commit format:** `.standards/instructions/commit-messages.md`
 
 ## 🎯 Quick Reference
 
