@@ -1,6 +1,7 @@
 # file: .github/workflows/sync-from-template.yml
-# version: 1.1.0
+# version: 1.2.0
 # guid: 8f9e0a1b-2c3d-4e5f-6a7b-8c9d0e1f2a3b
+# last-edited: 2026-08-30
 name: Sync from Template
 
 on:
@@ -34,7 +35,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: recursive
-          repository: jdfalk/jft-github-actions
+          repository: falkcorp/gha-template-repo
           path: template
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 1
@@ -161,11 +162,11 @@ jobs:
           rm -rf template
 
           git add .
-          git commit -m "chore(sync): sync files from jft-github-actions template
+          git commit -m "chore(sync): sync files from gha-template-repo template
 
           Synced ${{ steps.sync.outputs.changed_count }} file(s) from template repository.
 
-          This is an automated sync from the jft-github-actions template repository."
+          This is an automated sync from the falkcorp/gha-template-repo template repository."
 
           git push
 
