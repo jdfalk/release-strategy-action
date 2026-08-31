@@ -1,5 +1,14 @@
+# file: .github/dependabot.yml
+# version: 1.1.0
+# guid: e95e82a6-e2d6-4115-8fe4-3a6d47946e92
+# last-edited: 2026-08-30
+
 # Smart Dependabot configuration for bootstrap-jft-github-actions.N0GjEH
 # Automatically detected: github-actions
+#
+# NOTE: this file is synced to every falkcorp repo carrying
+# .github/workflows/sync-from-template.yml. Edit it HERE, not downstream --
+# the sync overwrites the downstream copy wholesale.
 
 version: 2
 updates:
@@ -17,3 +26,22 @@ updates:
   labels:
   - dependencies
   - priority-high
+
+# Git submodules -- .standards is the org-wide coding standards submodule
+# (falkcorp/.github). A submodule is a PINNED COMMIT, not a live link, so a
+# repo keeps consuming whatever standards existed the day it was added until
+# something bumps the pin. Nothing did: as of 2026-08-30 all 15 repos synced
+# from this template pinned .standards at a stale commit and none was current.
+- package-ecosystem: gitsubmodule
+  directory: /
+  schedule:
+    interval: weekly
+    day: friday
+    time: "09:00"
+    timezone: America/New_York
+  open-pull-requests-limit: 5
+  commit-message:
+    prefix: chore
+    include: scope
+  labels:
+  - dependencies
